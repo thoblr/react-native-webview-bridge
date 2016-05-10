@@ -68,7 +68,9 @@ var WebViewBridge = React.createClass({
   componentWillMount: function() {
     this.emmiter = DeviceEventEmitter.addListener("webViewBridgeMessage", (body) => {
       const { onBridgeMessage } = this.props;
-      const message = body.message;
+      const {viewId, message} = body;
+      if (this.viewId !== viewId) return;
+
       if (onBridgeMessage) {
         onBridgeMessage(message);
       }
@@ -192,6 +194,7 @@ var WebViewBridge = React.createClass({
   },
 
   onLoadingStart: function(event) {
+    this.viewId = event.currentTarget;
     this.injectBridgeScript();
     var onLoadStart = this.props.onLoadStart;
     onLoadStart && onLoadStart(event);
